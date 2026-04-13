@@ -1,0 +1,69 @@
+{
+  "_instructions": "Fill in your personal information below. This is used by the AI resume builder to tailor your resume for each job application.",
+  "personalInfo": {
+    "name": "YOUR FULL NAME",
+    "email": "your.email@example.com",
+    "phone": "555-555-5555",
+    "location": "City, State",
+    "linkedin": "linkedin.com/in/yourprofile",
+    "portfolio": "yourportfolio.com",
+    "instagram": "@yourusername"
+  },
+  "summary": "Passionate videographer with X years of experience capturing high-energy events, combat sports, and live productions. Skilled in [camera systems], editing suites, and delivering broadcast-quality content under tight deadlines. Adept at working in fast-paced environments including MMA/BJJ events, boxing matches, and live shows.",
+  "skills": {
+    "cameras": ["Sony FX3", "Canon EOS R5", "GoPro Hero"],
+    "editing": ["Adobe Premiere Pro", "DaVinci Resolve", "Final Cut Pro"],
+    "lighting": ["3-point lighting", "LED panels", "Natural light"],
+    "audio": ["Rode NTG3", "Zoom H6", "Wireless lavs"],
+    "other": ["Color grading", "Motion graphics", "Live streaming", "Drone operation (FAA Part 107)", "Social media content creation"]
+  },
+  "experience": [
+    {
+      "title": "Freelance Videographer",
+      "company": "Self-Employed",
+      "location": "Your City, State",
+      "startDate": "Jan 2020",
+      "endDate": "Present",
+      "bullets": [
+        "Filmed and edited promotional content for local MMA gyms, BJJ academies, and boxing clubs",
+        "Covered live combat sports events including local tournaments and amateur fight nights",
+        "Produced highlight reels, social media clips, and full-event documentation",
+        "Managed all aspects of production from pre-production planning to final delivery",
+        "Grew client social media engagement by X% through compelling video content"
+      ]
+    },
+    {
+      "title": "Event Videographer",
+      "company": "Previous Company / Event Name",
+      "location": "City, State",
+      "startDate": "Jun 2018",
+      "endDate": "Dec 2019",
+      "bullets": [
+        "Shot and edited footage for corporate events, conferences, and live performances",
+        "Coordinated multi-camera setups for large-scale events with 500+ attendees",
+        "Delivered same-day edit reels for social media distribution",
+        "Operated gimbal stabilizers and jib arms for dynamic event coverage"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Your Degree (e.g., BFA in Film Production)",
+      "school": "Your School",
+      "location": "City, State",
+      "year": "2018"
+    }
+  ],
+  "certifications": [
+    "FAA Part 107 Drone Pilot Certificate",
+    "Adobe Certified Professional - Premiere Pro"
+  ],
+  "combatSportsBackground": {
+    "note": "Include if relevant to the job",
+    "experience": [
+      "Active practitioner of Brazilian Jiu-Jitsu (X years, Belt rank)",
+      "Understanding of MMA, boxing, and grappling sport formats",
+      "Network within local combat sports community"
+    ]
+  }
+}

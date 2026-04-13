@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LinkedIn Videography Job Finder</title>
+  <link rel="stylesheet" href="jobs.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="logo">
+      <span class="logo-icon">&#127909;</span>
+      <span>Videography Job Finder</span>
+    </div>
+    <nav>
+      <a href="index.html">Boogie Bot</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ── Search Panel ── -->
+    <section class="search-panel card">
+      <h2>Find Videography Jobs on LinkedIn</h2>
+      <p class="subtitle">Searches for videographer, event video, and combat sports media roles near you.</p>
+
+      <div class="search-row">
+        <div class="input-group">
+          <label for="locationInput">Your Location</label>
+          <input id="locationInput" type="text" placeholder="e.g. Las Vegas, NV" />
+        </div>
+        <div class="input-group">
+          <label for="extraKeywords">Extra Keywords (comma-separated)</label>
+          <input id="extraKeywords" type="text" placeholder="e.g. drone, live stream, UFC" />
+        </div>
+        <div class="input-group checkbox-group">
+          <label>
+            <input id="fetchDescriptions" type="checkbox" checked />
+            Fetch full job descriptions (slower, better resume tailoring)
+          </label>
+        </div>
+      </div>
+
+      <div class="search-actions">
+        <button id="scrapeBtn" class="btn btn-primary">&#128269; Scrape LinkedIn Jobs</button>
+        <button id="loadCachedBtn" class="btn btn-secondary">&#128190; Load Cached Results</button>
+        <span id="scrapeStatus" class="status-badge hidden"></span>
+      </div>
+    </section>
+
+    <!-- ── Stats Bar ── -->
+    <section id="statsBar" class="stats-bar hidden">
+      <div class="stat"><span id="statTotal">0</span><label>Total</label></div>
+      <div class="stat high"><span id="statHigh">0</span><label>High Match</label></div>
+      <div class="stat medium"><span id="statMedium">0</span><label>Medium Match</label></div>
+      <div class="stat combat"><span id="statCombat">0</span><label>Combat Sports</label></div>
+      <div class="stat events"><span id="statEvents">0</span><label>Events</label></div>
+    </section>
+
+    <!-- ── Filter Bar ── -->
+    <section id="filterBar" class="filter-bar card hidden">
+      <div class="filter-group">
+        <label>Category</label>
+        <select id="filterCategory">
+          <option value="all">All Categories</option>
+          <option value="videography">Videography</option>
+          <option value="combat-sports">Combat Sports</option>
+          <option value="events">Events</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Match Level</label>
+        <select id="filterRelevance">
+          <option value="all">All Levels</option>
+          <option value="high">High Match</option>
+          <option value="medium">Medium Match</option>
+          <option value="low">Low Match</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Location Filter</label>
+        <input id="filterLocation" type="text" placeholder="Filter by city/state..." />
+      </div>
+      <button id="applyFiltersBtn" class="btn btn-secondary">Apply Filters</button>
+    </section>
+
+    <!-- ── Job Results Grid ── -->
+    <section id="jobsSection" class="jobs-section hidden">
+      <h3 id="resultsHeading">Jobs</h3>
+      <div id="jobsGrid" class="jobs-grid"></div>
+      <div id="noResults" class="no-results hidden">
+        <p>No jobs found matching your filters. Try broadening your search or running a new scrape.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ── Resume Builder Modal ── -->
+  <div id="resumeModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+    <div class="modal-content">
+      <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
+      <h2>AI Resume Builder</h2>
+      <div id="modalJobInfo" class="modal-job-info"></div>
+
+      <div id="resumeLoading" class="resume-loading hidden">
+        <div class="spinner"></div>
+        <p>GPT-4 is tailoring your resume...</p>
+      </div>
+
+      <div id="resumeResult" class="resume-result hidden">
+        <div class="resume-tabs">
+          <button class="tab-btn active" data-tab="analysis">Match Analysis</button>
+          <button class="tab-btn" data-tab="resume">Tailored Resume</button>
+          <button class="tab-btn" data-tab="cover">Cover Letter Opener</button>
+          <button class="tab-btn" data-tab="keywords">Keywords</button>
+        </div>
+
+        <div id="tab-analysis" class="tab-panel active">
+          <h4>Why You're a Great Fit</h4>
+          <p id="matchAnalysis"></p>
+        </div>
+
+        <div id="tab-resume" class="tab-panel">
+          <div class="resume-actions">
+            <button class="btn btn-secondary btn-sm" id="copyResumeBtn">&#128203; Copy</button>
+            <button class="btn btn-secondary btn-sm" id="downloadResumeBtn">&#8595; Download .txt</button>
+          </div>
+          <pre id="tailoredResumeText"></pre>
+        </div>
+
+        <div id="tab-cover" class="tab-panel">
+          <h4>Cover Letter Opening Paragraph</h4>
+          <div id="coverLetterText" class="cover-letter-box"></div>
+          <button class="btn btn-secondary btn-sm" id="copyCoverBtn">&#128203; Copy</button>
+        </div>
+
+        <div id="tab-keywords" class="tab-panel">
+          <h4>Keywords Matched</h4>
+          <div id="keywordsContainer" class="keywords-grid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="jobs-script.js"></script>
+</body>
+</html>
