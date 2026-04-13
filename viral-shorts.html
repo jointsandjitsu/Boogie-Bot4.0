@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Viral Shorts Agent — Joints & Jitsu</title>
+  <style>
+    :root {
+      --bg:       #0a0a0f;
+      --surface:  #12121a;
+      --border:   #1e1e2e;
+      --accent:   #00ffcc;
+      --accent2:  #ff6b35;
+      --text:     #e0e0f0;
+      --muted:    #6b6b8a;
+      --success:  #00e676;
+      --radius:   10px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Courier New', monospace;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 4rem;
+    }
+
+    /* ── Header ── */
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    header h1 {
+      font-size: 2rem;
+      color: var(--accent);
+      text-shadow: 0 0 20px rgba(0,255,204,.4);
+      letter-spacing: 2px;
+    }
+    header p {
+      color: var(--muted);
+      margin-top: .4rem;
+      font-size: .85rem;
+    }
+
+    /* ── Form card ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.8rem;
+      width: 100%;
+      max-width: 640px;
+    }
+
+    label {
+      display: block;
+      font-size: .75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: .35rem;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: .9rem;
+      padding: .65rem .9rem;
+      margin-bottom: 1.1rem;
+      outline: none;
+      transition: border-color .2s;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+    }
+    textarea { resize: vertical; min-height: 72px; }
+
+    .row { display: flex; gap: 1rem; }
+    .row > * { flex: 1; }
+
+    .btn {
+      width: 100%;
+      padding: .75rem;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: .95rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: opacity .2s, transform .1s;
+    }
+    .btn:hover:not(:disabled) { opacity: .85; }
+    .btn:active:not(:disabled) { transform: scale(.98); }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+
+    /* ── Progress ── */
+    #progress {
+      width: 100%;
+      max-width: 640px;
+      margin-top: 1.5rem;
+      display: none;
+    }
+    .step {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      padding: .6rem .9rem;
+      border-radius: 6px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      margin-bottom: .5rem;
+      font-size: .82rem;
+      color: var(--muted);
+      transition: color .3s, border-color .3s;
+    }
+    .step.active  { color: var(--accent);  border-color: var(--accent);  }
+    .step.done    { color: var(--success); border-color: var(--success); }
+    .step .icon   { font-size: 1rem; min-width: 1.1rem; text-align: center; }
+    .spinner {
+      width: 14px; height: 14px;
+      border: 2px solid currentColor;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Results ── */
+    #results {
+      width: 100%;
+      max-width: 640px;
+      margin-top: 1.5rem;
+      display: none;
+    }
+
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 1rem;
+      overflow: hidden;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .85rem 1.1rem;
+      cursor: pointer;
+      user-select: none;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-header h3 {
+      font-size: .85rem;
+      letter-spacing: 1px;
+      color: var(--accent);
+    }
+    .section-header .chevron {
+      color: var(--muted);
+      transition: transform .2s;
+      font-size: .8rem;
+    }
+    .section-header.open .chevron { transform: rotate(180deg); }
+    .section-body {
+      display: none;
+      padding: 1.1rem;
+    }
+    .section-body.open { display: block; }
+    .section-body pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: inherit;
+      font-size: .82rem;
+      line-height: 1.7;
+      color: var(--text);
+    }
+
+    .director-note {
+      background: linear-gradient(135deg, rgba(0,255,204,.08), rgba(255,107,53,.05));
+      border: 1px solid rgba(0,255,204,.25);
+      border-radius: var(--radius);
+      padding: 1.1rem 1.3rem;
+      margin-bottom: 1rem;
+      font-size: .85rem;
+      line-height: 1.7;
+      color: var(--text);
+    }
+    .director-note strong {
+      display: block;
+      color: var(--accent);
+      font-size: .75rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: .4rem;
+    }
+
+    .copy-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: .7rem;
+      padding: .25rem .6rem;
+      cursor: pointer;
+      transition: color .2s, border-color .2s;
+    }
+    .copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+    .error-box {
+      background: rgba(255,50,50,.1);
+      border: 1px solid rgba(255,50,50,.3);
+      border-radius: 6px;
+      padding: 1rem;
+      color: #ff6b6b;
+      font-size: .85rem;
+      margin-top: 1rem;
+      width: 100%;
+      max-width: 640px;
+    }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 3rem;
+      color: var(--muted);
+      font-size: .72rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>⚡ VIRAL SHORTS AGENT</h1>
+  <p>Joints & Jitsu · AI-Powered Short-Form Video Production</p>
+</header>
+
+<!-- Input form -->
+<div class="card">
+  <label for="topic">Video Topic / Idea</label>
+  <input id="topic" type="text" placeholder="e.g. How rolling BJJ cured my anxiety" />
+
+  <div class="row">
+    <div>
+      <label for="platform">Platform</label>
+      <select id="platform">
+        <option>TikTok</option>
+        <option>Instagram Reels</option>
+        <option>YouTube Shorts</option>
+      </select>
+    </div>
+    <div>
+      <label for="duration">Duration (seconds)</label>
+      <select id="duration">
+        <option value="15">15s</option>
+        <option value="30" selected>30s</option>
+        <option value="45">45s</option>
+        <option value="60">60s</option>
+      </select>
+    </div>
+  </div>
+
+  <label for="brandFocus">Brand Focus <span style="color:var(--muted)">(optional)</span></label>
+  <textarea id="brandFocus" placeholder="e.g. Promote our new pre-roll drop; target white-belt beginners; funny competition prep content"></textarea>
+
+  <button class="btn" id="generateBtn" onclick="generate()">GENERATE PRODUCTION PACKAGE</button>
+</div>
+
+<!-- Progress tracker -->
+<div id="progress">
+  <div class="step" id="step-hooks">
+    <span class="icon">🎣</span> Generating viral hooks
+  </div>
+  <div class="step" id="step-script">
+    <span class="icon">📝</span> Writing video script
+  </div>
+  <div class="step" id="step-production">
+    <span class="icon">🎬</span> Planning production (shot list, lighting, edits)
+  </div>
+  <div class="step" id="step-titles">
+    <span class="icon">🏷️</span> Generating titles & hashtags
+  </div>
+  <div class="step" id="step-note">
+    <span class="icon">🎯</span> Writing creative director's note
+  </div>
+</div>
+
+<!-- Results -->
+<div id="results"></div>
+
+<footer>Powered by Claude claude-sonnet-4-6 · Joints &amp; Jitsu © 2025</footer>
+
+<script>
+  const STEPS_MAP = {
+    generate_hooks:               'step-hooks',
+    write_script:                 'step-script',
+    plan_production:              'step-production',
+    generate_titles_and_hashtags: 'step-titles',
+  };
+
+  function setStep(id, state) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('active', 'done');
+
+    // Remove any existing spinner
+    const existing = el.querySelector('.spinner');
+    if (existing) existing.remove();
+
+    if (state === 'active') {
+      el.classList.add('active');
+      const spinner = document.createElement('span');
+      spinner.className = 'spinner';
+      el.appendChild(spinner);
+    } else if (state === 'done') {
+      el.classList.add('done');
+      el.querySelector('.icon').textContent = '✓';
+    }
+  }
+
+  function markToolsDone(steps) {
+    const seen = new Set();
+    for (const { tool } of steps) {
+      const stepId = STEPS_MAP[tool];
+      if (stepId && !seen.has(stepId)) {
+        setStep(stepId, 'done');
+        seen.add(stepId);
+      }
+    }
+  }
+
+  function makeSection(title, content) {
+    const id = 'sec-' + Math.random().toString(36).slice(2);
+    return `
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)" id="hdr-${id}">
+          <h3>${title}</h3>
+          <div style="display:flex;gap:.5rem;align-items:center;">
+            <button class="copy-btn" onclick="event.stopPropagation();copySection('body-${id}')">Copy</button>
+            <span class="chevron">▼</span>
+          </div>
+        </div>
+        <div class="section-body open" id="body-${id}">
+          <pre>${escapeHtml(content)}</pre>
+        </div>
+      </div>`;
+  }
+
+  function toggleSection(hdr) {
+    hdr.classList.toggle('open');
+    const bodyId = hdr.id.replace('hdr-', 'body-');
+    const body = document.getElementById(bodyId);
+    if (body) body.classList.toggle('open');
+  }
+
+  function copySection(bodyId) {
+    const body = document.getElementById(bodyId);
+    if (!body) return;
+    const text = body.querySelector('pre')?.textContent ?? '';
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.querySelector(`#${bodyId}`).previousElementSibling.querySelector('.copy-btn');
+      if (btn) { btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy', 1500); }
+    });
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  async function generate() {
+    const topic      = document.getElementById('topic').value.trim();
+    const platform   = document.getElementById('platform').value;
+    const duration   = Number(document.getElementById('duration').value);
+    const brandFocus = document.getElementById('brandFocus').value.trim();
+
+    if (!topic) { alert('Please enter a video topic.'); return; }
+
+    // Reset UI
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('results').innerHTML = '';
+    const progEl = document.getElementById('progress');
+    progEl.style.display = 'block';
+
+    Object.values(STEPS_MAP).forEach(id => setStep(id, ''));
+    setStep('step-note', '');
+
+    const btn = document.getElementById('generateBtn');
+    btn.disabled = true;
+    btn.textContent = 'GENERATING…';
+
+    // Animate steps in sequence to give live feedback feel
+    let stepIdx = 0;
+    const stepIds = ['step-hooks', 'step-script', 'step-production', 'step-titles', 'step-note'];
+    setStep(stepIds[0], 'active');
+
+    // Poll-style animation — we advance a step every ~8s to approximate real progress
+    const stepTimer = setInterval(() => {
+      if (stepIdx < stepIds.length - 1) {
+        setStep(stepIds[stepIdx], 'done');
+        stepIdx++;
+        setStep(stepIds[stepIdx], 'active');
+      }
+    }, 8000);
+
+    try {
+      const response = await fetch('/api/viral-shorts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic, platform, duration, brandFocus }),
+      });
+
+      clearInterval(stepTimer);
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || 'Server error');
+      }
+
+      const { package: pkg } = await response.json();
+
+      // Mark actual completed steps
+      stepIds.forEach(id => setStep(id, 'done'));
+      markToolsDone(pkg.steps || []);
+
+      // Build results HTML
+      let html = '';
+
+      if (pkg.directorNote) {
+        html += `<div class="director-note"><strong>🎯 Creative Director's Note</strong>${escapeHtml(pkg.directorNote)}</div>`;
+      }
+      if (pkg.hooks)            html += makeSection('🎣 VIRAL HOOKS', pkg.hooks);
+      if (pkg.script)           html += makeSection('📝 VIDEO SCRIPT', pkg.script);
+      if (pkg.productionPlan)   html += makeSection('🎬 PRODUCTION PLAN', pkg.productionPlan);
+      if (pkg.titlesAndHashtags) html += makeSection('🏷️ TITLES & HASHTAGS', pkg.titlesAndHashtags);
+
+      const resultsEl = document.getElementById('results');
+      resultsEl.innerHTML = html;
+      resultsEl.style.display = 'block';
+      resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    } catch (err) {
+      clearInterval(stepTimer);
+      stepIds.forEach(id => { const el = document.getElementById(id); el.classList.remove('active'); });
+
+      const resultsEl = document.getElementById('results');
+      resultsEl.innerHTML = `<div class="error-box">⚠ ${escapeHtml(err.message)}</div>`;
+      resultsEl.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'GENERATE PRODUCTION PACKAGE';
+    }
+  }
+
+  // Allow Enter in topic field to submit
+  document.getElementById('topic').addEventListener('keydown', e => {
+    if (e.key === 'Enter') generate();
+  });
+</script>
+</body>
+</html>
