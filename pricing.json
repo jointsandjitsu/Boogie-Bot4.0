@@ -1,0 +1,102 @@
+{
+  "models": {
+    "claude-opus-4-7": {
+      "display": "Claude Opus 4.7",
+      "input": 15.0,
+      "output": 75.0,
+      "cache_write": 18.75,
+      "cache_read": 1.5
+    },
+    "claude-sonnet-4-6": {
+      "display": "Claude Sonnet 4.6",
+      "input": 3.0,
+      "output": 15.0,
+      "cache_write": 3.75,
+      "cache_read": 0.3
+    },
+    "claude-haiku-4-5": {
+      "display": "Claude Haiku 4.5",
+      "input": 0.8,
+      "output": 4.0,
+      "cache_write": 1.0,
+      "cache_read": 0.08
+    },
+    "claude-haiku-4-5-20251001": {
+      "display": "Claude Haiku 4.5",
+      "input": 0.8,
+      "output": 4.0,
+      "cache_write": 1.0,
+      "cache_read": 0.08
+    },
+    "claude-opus-4-5": {
+      "display": "Claude Opus 4.5",
+      "input": 15.0,
+      "output": 75.0,
+      "cache_write": 18.75,
+      "cache_read": 1.5
+    },
+    "claude-sonnet-4-5": {
+      "display": "Claude Sonnet 4.5",
+      "input": 3.0,
+      "output": 15.0,
+      "cache_write": 3.75,
+      "cache_read": 0.3
+    },
+    "claude-3-5-sonnet-20241022": {
+      "display": "Claude 3.5 Sonnet",
+      "input": 3.0,
+      "output": 15.0,
+      "cache_write": 3.75,
+      "cache_read": 0.3
+    },
+    "claude-3-5-haiku-20241022": {
+      "display": "Claude 3.5 Haiku",
+      "input": 0.8,
+      "output": 4.0,
+      "cache_write": 1.0,
+      "cache_read": 0.08
+    },
+    "claude-3-opus-20240229": {
+      "display": "Claude 3 Opus",
+      "input": 15.0,
+      "output": 75.0,
+      "cache_write": 18.75,
+      "cache_read": 1.5
+    },
+    "claude-3-sonnet-20240229": {
+      "display": "Claude 3 Sonnet",
+      "input": 3.0,
+      "output": 15.0,
+      "cache_write": 3.75,
+      "cache_read": 0.3
+    },
+    "claude-3-haiku-20240307": {
+      "display": "Claude 3 Haiku",
+      "input": 0.25,
+      "output": 1.25,
+      "cache_write": 0.3,
+      "cache_read": 0.03
+    }
+  },
+  "plans": {
+    "api": {
+      "name": "API (pay-per-token)",
+      "description": "Actual billed cost at current API prices"
+    },
+    "pro": {
+      "name": "Pro ($20/mo)",
+      "monthly_cost": 20,
+      "description": "Claude Pro subscription — $20/month"
+    },
+    "max": {
+      "name": "Max ($100/mo)",
+      "monthly_cost": 100,
+      "description": "Claude Max subscription — $100/month"
+    },
+    "max_20x": {
+      "name": "Max 20× ($200/mo)",
+      "monthly_cost": 200,
+      "description": "Claude Max 20× subscription — $200/month"
+    }
+  }
+}

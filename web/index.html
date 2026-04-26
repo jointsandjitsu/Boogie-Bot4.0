@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Token Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ── Header / tabs ─────────────────────────────────────────────────── -->
+  <header>
+    <h1>Token Dashboard</h1>
+    <a class="tab-link active" href="#overview"  data-tab="overview">Overview</a>
+    <a class="tab-link"        href="#prompts"   data-tab="prompts">Prompts</a>
+    <a class="tab-link"        href="#sessions"  data-tab="sessions">Sessions</a>
+    <a class="tab-link"        href="#projects"  data-tab="projects">Projects</a>
+    <a class="tab-link"        href="#skills"    data-tab="skills">Skills</a>
+    <a class="tab-link"        href="#tips"      data-tab="tips">Tips</a>
+    <a class="tab-link"        href="#settings"  data-tab="settings">Settings</a>
+  </header>
+
+  <main>
+
+    <!-- ── OVERVIEW ──────────────────────────────────────────────────────── -->
+    <div class="section active" id="sec-overview">
+      <p id="ov-loading" class="loading"></p>
+
+      <!-- Stat cards -->
+      <div class="stat-grid">
+        <div class="stat-card" id="ov-input">
+          <div class="stat-label">Input tokens</div>
+          <div class="stat-value">—</div>
+          <div class="stat-sub"></div>
+        </div>
+        <div class="stat-card" id="ov-output">
+          <div class="stat-label">Output tokens</div>
+          <div class="stat-value">—</div>
+          <div class="stat-sub"></div>
+        </div>
+        <div class="stat-card" id="ov-cache-read">
+          <div class="stat-label">Cache-read tokens</div>
+          <div class="stat-value">—</div>
+          <div class="stat-sub"></div>
+        </div>
+        <div class="stat-card" id="ov-cache-write">
+          <div class="stat-label">Cache-write tokens</div>
+          <div class="stat-value">—</div>
+          <div class="stat-sub"></div>
+        </div>
+        <div class="stat-card" id="ov-sessions">
+          <div class="stat-label">Sessions</div>
+          <div class="stat-value">—</div>
+          <div class="stat-sub"></div>
+        </div>
+        <div class="stat-card" id="ov-turns">
+          <div class="stat-label">Turns</div>
+          <div class="stat-value">—</div>
+          <div class="stat-sub"></div>
+        </div>
+        <div class="stat-card" id="ov-cost">
+          <div class="stat-label">Estimated cost</div>
+          <div class="stat-value">—</div>
+          <div class="stat-sub"></div>
+        </div>
+      </div>
+
+      <!-- Daily chart -->
+      <div class="card" style="margin-bottom:16px">
+        <h2>Daily token usage</h2>
+        <p id="ov-cache-rate" style="font-size:12px;color:var(--muted);margin-bottom:8px"></p>
+        <div class="chart-wrap" id="ov-daily-chart">
+          <p class="loading">Loading…</p>
+        </div>
+        <div style="display:flex;gap:20px;margin-top:8px;font-size:11px;color:var(--muted)">
+          <span><span style="display:inline-block;width:12px;height:2px;background:#58a6ff;vertical-align:middle;margin-right:4px"></span>Work tokens</span>
+          <span><span style="display:inline-block;width:12px;height:2px;background:#3fb950;border-top:2px dashed #3fb950;vertical-align:middle;margin-right:4px"></span>Cache-read tokens</span>
+        </div>
+      </div>
+
+      <!-- Projects + Models -->
+      <div class="two-col">
+        <div class="card">
+          <h2>Tokens by project</h2>
+          <div id="ov-projects-chart"><p class="loading">Loading…</p></div>
+        </div>
+        <div class="card">
+          <h2>Token share by model</h2>
+          <div id="ov-models-chart"><p class="loading">Loading…</p></div>
+        </div>
+      </div>
+
+      <!-- Top tools + Recent sessions -->
+      <div class="two-col">
+        <div class="card">
+          <h2>Top tools by call count</h2>
+          <div id="ov-tools-chart"><p class="loading">Loading…</p></div>
+        </div>
+        <div class="card">
+          <h2>Recent sessions</h2>
+          <div class="table-wrap">
+            <table>
+              <thead><tr>
+                <th>Session</th><th>Project</th><th>Started</th>
+                <th class="num">Turns</th><th class="num">Tokens</th><th>Model</th>
+              </tr></thead>
+              <tbody id="ov-sessions-body">
+                <tr><td colspan="6" class="loading">Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Explainer panel -->
+      <details class="explain">
+        <summary>What do these numbers mean?</summary>
+        <p style="margin:8px 0">Claude bills by the token — roughly 3–4 characters each. Every time you send a message, the entire conversation context is sent as input.</p>
+        <dl>
+          <dt>Input tokens</dt>
+          <dd>Everything sent to the model: your messages, the system prompt, tool results, and the full conversation history. This is usually the largest cost driver.</dd>
+          <dt>Output tokens</dt>
+          <dd>Everything the model writes back: text, code, and tool-call JSON. Output costs 3–5× more per token than input on most models.</dd>
+          <dt>Cache-write tokens</dt>
+          <dd>The first time a large static prefix (system prompt, context) is processed, Anthropic stores it on their servers. You pay a small write fee. Subsequent turns re-use it cheaply.</dd>
+          <dt>Cache-read tokens</dt>
+          <dd>When the cache hits, you pay ≈10× less than the normal input rate for those tokens. High cache-read counts are good — it means you're saving money.</dd>
+          <dt>Estimated cost</dt>
+          <dd>Computed from the token counts above using the rates in pricing.json. Switch to your actual plan in the Settings tab to see the API-equivalent dollar value of your usage.</dd>
+        </dl>
+      </details>
+    </div><!-- /overview -->
+
+
+    <!-- ── PROMPTS ────────────────────────────────────────────────────────── -->
+    <div class="section" id="sec-prompts">
+      <p id="prompts-loading" class="loading"></p>
+      <div class="card">
+        <h2>Most expensive prompts (by total tokens)</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Prompt</th>
+              <th>Project</th>
+              <th class="num">Total</th>
+              <th class="num">Input</th>
+              <th class="num">Output</th>
+              <th class="num">Cached</th>
+              <th>Tools</th>
+              <th>When</th>
+            </tr></thead>
+            <tbody id="prompts-body">
+              <tr><td colspan="8" class="loading">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /prompts -->
+
+
+    <!-- ── SESSIONS ───────────────────────────────────────────────────────── -->
+    <div class="section" id="sec-sessions">
+      <p id="sessions-loading" class="loading"></p>
+      <div class="card">
+        <h2>All sessions</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Session ID</th>
+              <th>Project</th>
+              <th>Started</th>
+              <th class="num">Turns</th>
+              <th class="num">Tokens</th>
+              <th class="num">Cached</th>
+              <th>Model</th>
+            </tr></thead>
+            <tbody id="sessions-body">
+              <tr><td colspan="7" class="loading">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /sessions -->
+
+    <!-- Session detail (dynamic) -->
+    <div class="section" id="sec-session-detail"></div>
+
+
+    <!-- ── PROJECTS ───────────────────────────────────────────────────────── -->
+    <div class="section" id="sec-projects">
+      <p id="projects-loading" class="loading"></p>
+      <div class="card">
+        <h2>Projects comparison</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Project</th>
+              <th class="num">Sessions</th>
+              <th class="num">Turns</th>
+              <th class="num">Input tok</th>
+              <th class="num">Output tok</th>
+              <th class="num">Cache-read tok</th>
+              <th>Last active</th>
+            </tr></thead>
+            <tbody id="projects-body">
+              <tr><td colspan="7" class="loading">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /projects -->
+
+
+    <!-- ── SKILLS ─────────────────────────────────────────────────────────── -->
+    <div class="section" id="sec-skills">
+      <p id="skills-loading" class="loading"></p>
+      <div class="two-col">
+        <div class="card">
+          <h2>Skill invocations</h2>
+          <div id="skills-chart"><p class="loading">Loading…</p></div>
+        </div>
+        <div class="card">
+          <h2>Skills detail</h2>
+          <div class="table-wrap">
+            <table>
+              <thead><tr>
+                <th>Skill</th>
+                <th class="num">Invocations</th>
+                <th class="num">Total tokens</th>
+              </tr></thead>
+              <tbody id="skills-body">
+                <tr><td colspan="3" class="loading">Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="explain" style="margin-top:0">
+        <p>Skills are detected as user messages starting with <code>/</code>. Token counts reflect the full
+        turn (context + response). Subagent work spawned by a skill is attributed to that skill's turn.
+        See <a href="https://github.com/jointsandjitsu/boogie-bot4.0/blob/main/docs/KNOWN_LIMITATIONS.md">KNOWN_LIMITATIONS.md</a> for caveats.</p>
+      </div>
+    </div><!-- /skills -->
+
+
+    <!-- ── TIPS ───────────────────────────────────────────────────────────── -->
+    <div class="section" id="sec-tips">
+      <p id="tips-loading" class="loading"></p>
+      <div id="tips-container"></div>
+      <div class="explain" style="margin-top:16px">
+        <p>Tips are generated by rule-based analysis of your sessions. They don't send any data anywhere —
+        everything is computed locally from the SQLite cache at <code>~/.claude/token-dashboard.db</code>.</p>
+      </div>
+    </div><!-- /tips -->
+
+
+    <!-- ── SETTINGS ───────────────────────────────────────────────────────── -->
+    <div class="section" id="sec-settings">
+      <div class="card settings-form">
+        <h2>Pricing plan</h2>
+        <p style="color:var(--muted);font-size:12px;margin-bottom:16px">
+          Change this to see cost estimates that reflect your actual subscription.
+          Numbers in the Overview tab update immediately after saving.
+        </p>
+        <div class="form-group">
+          <label class="form-label" for="plan-select">Your plan</label>
+          <select class="form-select" id="plan-select" onchange="document.getElementById('settings-desc').textContent=(this.options[this.selectedIndex].text)">
+            <option>Loading…</option>
+          </select>
+          <p id="settings-desc" style="color:var(--muted);font-size:12px;margin-top:6px"></p>
+        </div>
+        <button class="btn" onclick="savePlan()">Save</button>
+        <p id="settings-status" style="color:var(--green);font-size:12px;margin-top:10px"></p>
+      </div>
+
+      <div class="card" style="margin-top:16px;max-width:500px">
+        <h2>Data location</h2>
+        <p style="font-size:12px;color:var(--muted);line-height:1.7">
+          Sessions are read from <code>~/.claude/projects/</code> and cached in
+          <code>~/.claude/token-dashboard.db</code>.<br>
+          Nothing leaves your machine. No telemetry. No API calls for your data.
+        </p>
+      </div>
+    </div><!-- /settings -->
+
+  </main>
+</div><!-- /app -->
+
+<script src="app.js"></script>
+</body>
+</html>
