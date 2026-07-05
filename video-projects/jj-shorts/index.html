@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!--
+    Joints & Jitsu — Base Short-Form Template
+    1080 × 1920 | 30 fps | 30 seconds | TikTok / Reels / YT Shorts
+
+    How to use:
+      1. cp -r jj-shorts my-new-video
+      2. Edit scene div text below
+      3. Adjust GSAP keyframe timings if scene count changes
+      4. Add <video> or <img> to .media-layer for b-roll
+      5. npx hyperframes preview
+      OR: node pipeline/run.js --slug my-new-video
+  -->
+  <link rel="stylesheet" href="../../assets/brand-tokens.css" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{width:var(--jj-canvas-w);height:var(--jj-canvas-h);overflow:hidden;
+      background:var(--jj-bg);font-family:var(--jj-font-body);position:relative}
+    .bg-layer{position:absolute;inset:0;background:var(--jj-gradient-bg);z-index:0}
+    .bg-glow{position:absolute;inset:0;background:var(--jj-gradient-glow);z-index:1;opacity:0}
+    .media-layer{position:absolute;inset:0;z-index:2;overflow:hidden}
+    .media-layer video,.media-layer img{width:100%;height:100%;object-fit:cover}
+    .media-overlay{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:3;opacity:0}
+    .scene{position:absolute;inset:0;z-index:40;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;
+      padding:var(--jj-safe-top) var(--jj-pad-h) var(--jj-safe-bottom);
+      opacity:0;pointer-events:none}
+    .scene-hook .headline{font-family:var(--jj-font-display);font-size:108px;font-weight:900;
+      line-height:1.05;text-align:center;text-transform:uppercase;
+      color:var(--jj-accent);text-shadow:var(--jj-glow-cyan)}
+    .scene-body .body-headline{font-family:var(--jj-font-display);font-size:80px;font-weight:900;
+      text-transform:uppercase;text-align:center;line-height:1.1;color:var(--jj-text)}
+    .scene-body .body-headline em{color:var(--jj-accent);font-style:normal}
+    .scene-body .body-sub{font-size:56px;font-weight:600;color:var(--jj-muted);
+      text-align:center;line-height:1.3;margin-top:24px}
+    .scene-cta{background:rgba(0,0,0,.55)}
+    .scene-cta .cta-headline{font-family:var(--jj-font-display);font-size:96px;font-weight:900;
+      text-transform:uppercase;text-align:center;line-height:1.05;
+      color:var(--jj-accent2);text-shadow:var(--jj-glow-orange);margin-bottom:48px}
+    .scene-cta .handle{font-family:var(--jj-font-display);font-size:52px;font-weight:900;
+      letter-spacing:2px;color:var(--jj-accent);text-shadow:var(--jj-glow-cyan);text-align:center}
+    .scene-cta .cta-sub{font-size:40px;color:var(--jj-muted);text-align:center;margin-top:24px}
+    .accent-line{position:absolute;left:0;right:0;height:3px;z-index:50;opacity:0;
+      background:linear-gradient(90deg,transparent 0%,var(--jj-accent) 20%,var(--jj-accent) 80%,transparent 100%)}
+    .accent-line.top{top:155px}.accent-line.bottom{bottom:270px}
+    .captions{position:absolute;bottom:var(--jj-safe-bottom);left:var(--jj-pad-h);right:var(--jj-pad-h);
+      padding:18px 28px;background:rgba(0,0,0,.60);border-radius:14px;
+      border:1px solid rgba(0,255,204,.15);font-size:52px;font-weight:700;color:var(--jj-white);
+      text-align:center;text-shadow:var(--jj-shadow-text);line-height:1.25;
+      z-index:60;opacity:0;min-height:100px}
+    .brand-badge{position:absolute;top:80px;left:var(--jj-pad-h);right:var(--jj-pad-h);
+      display:flex;align-items:center;justify-content:center;gap:18px;z-index:70;opacity:0}
+    .brand-badge .brand-name{font-family:var(--jj-font-display);font-size:38px;font-weight:900;
+      letter-spacing:4px;color:var(--jj-accent);text-shadow:var(--jj-glow-cyan)}
+    .brand-badge .brand-dot{width:10px;height:10px;border-radius:50%;
+      background:var(--jj-accent2);flex-shrink:0}
+  </style>
+</head>
+<body>
+  <div class="bg-layer"></div>
+  <div class="bg-glow"       id="bg-glow"></div>
+  <div class="media-layer"   id="media-layer">
+    <!-- <video src="assets/broll.mp4" muted playsinline></video> -->
+  </div>
+  <div class="media-overlay" id="media-overlay"></div>
+
+  <!-- Hook (0:00–0:03) -->
+  <div class="scene scene-hook" id="scene-hook">
+    <div class="headline">REPLACE THIS<br/>WITH YOUR<br/>HOOK LINE</div>
+  </div>
+
+  <!-- Body 1 (0:03–0:12) -->
+  <div class="scene scene-body" id="scene-body-1">
+    <div class="body-headline">FIRST KEY<br/><em>POINT</em></div>
+    <div class="body-sub">Supporting detail here</div>
+  </div>
+
+  <!-- Body 2 (0:12–0:22) -->
+  <div class="scene scene-body" id="scene-body-2">
+    <div class="body-headline">SECOND KEY<br/><em>POINT</em></div>
+    <div class="body-sub">The payoff moment</div>
+  </div>
+
+  <!-- Body 3 (0:22–0:25) -->
+  <div class="scene scene-body" id="scene-body-3">
+    <div class="body-headline">BRIDGE TO<br/><em>CTA</em></div>
+  </div>
+
+  <!-- CTA (0:25–0:30) -->
+  <div class="scene scene-cta" id="scene-cta">
+    <div class="cta-headline">FOLLOW<br/>FOR MORE</div>
+    <div class="handle">@jointsandjitsu</div>
+    <div class="cta-sub">Roll hard. Smoke smart.</div>
+  </div>
+
+  <div class="accent-line top"    id="accent-top"></div>
+  <div class="accent-line bottom" id="accent-bottom"></div>
+  <div class="captions"           id="captions"></div>
+  <div class="brand-badge"        id="brand-badge">
+    <span class="brand-dot"></span>
+    <span class="brand-name">JOINTS &amp; JITSU</span>
+    <span class="brand-dot"></span>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    ;(function () {
+      const captions = document.getElementById('captions');
+      function cap(text) { captions.textContent = text; }
+
+      const tl = gsap.timeline({ paused: true });
+
+      tl.to('#accent-top, #accent-bottom', { opacity: 1, duration: 0.3 }, 0)
+        .to('#brand-badge', { opacity: 1, y: 0, duration: 0.4 }, 0.05)
+        .to('#bg-glow',     { opacity: 0.35, duration: 0.6 }, 0);
+
+      // Hook (0–3s)
+      tl.fromTo('#scene-hook', { opacity: 0, scale: 0.95 },
+          { opacity: 1, scale: 1, duration: 0.4, ease: 'power2.out' }, 0)
+        .call(cap, ['REPLACE THIS WITH YOUR HOOK LINE'], 0.15)
+        .to('#captions', { opacity: 1, duration: 0.2 }, 0.15)
+        .to('#scene-hook', { opacity: 0, duration: 0.3 }, 2.7);
+
+      // Body 1 (3–12s)
+      tl.fromTo('#scene-body-1', { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }, 3)
+        .call(cap, ['First key point — your script line here.'], 3.1)
+        .to('#scene-body-1', { opacity: 0, duration: 0.3 }, 11.7);
+
+      // Body 2 (12–22s)
+      tl.fromTo('#scene-body-2', { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }, 12)
+        .call(cap, ['Second key point — the payoff moment.'], 12.1)
+        .to('#scene-body-2', { opacity: 0, duration: 0.3 }, 21.7);
+
+      // Body 3 (22–25s)
+      tl.fromTo('#scene-body-3', { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }, 22)
+        .call(cap, ['Bridge to the call to action.'], 22.1)
+        .to('#scene-body-3', { opacity: 0, duration: 0.3 }, 24.7);
+
+      // CTA (25–30s)
+      tl.to('#captions', { opacity: 0, duration: 0.25 }, 24.8)
+        .fromTo('#scene-cta', { opacity: 0, y: 40 },
+            { opacity: 1, y: 0, duration: 0.5, ease: 'back.out(1.4)' }, 25);
+
+      tl.set({}, {}, 30);
+
+      window.__timelines = window.__timelines || [];
+      window.__timelines.push(tl);
+    })();
+  </script>
+</body>
+</html>
