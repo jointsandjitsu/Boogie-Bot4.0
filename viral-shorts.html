@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Viral Shorts Studio — Joints & Jitsu</title>
+  <style>
+    :root {
+      --bg:      #0a0a0f;
+      --surface: #12121a;
+      --border:  #1e1e2e;
+      --accent:  #00ffcc;
+      --accent2: #ff6b35;
+      --text:    #e0e0f0;
+      --muted:   #6b6b8a;
+      --success: #00e676;
+      --error:   #ff6b6b;
+      --r:       10px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Courier New',monospace;background:var(--bg);color:var(--text);
+      min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:2rem 1rem 5rem}
+
+    header{text-align:center;margin-bottom:2.5rem}
+    header h1{font-size:1.9rem;color:var(--accent);text-shadow:0 0 20px rgba(0,255,204,.4);
+      letter-spacing:2px}
+    header p{color:var(--muted);margin-top:.4rem;font-size:.82rem}
+
+    /* ── Mode tabs ── */
+    .tabs{display:flex;gap:.5rem;margin-bottom:1.5rem;width:100%;max-width:640px}
+    .tab{flex:1;padding:.55rem;background:var(--surface);border:1px solid var(--border);
+      border-radius:6px;color:var(--muted);font-family:inherit;font-size:.8rem;
+      letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s}
+    .tab.active{color:var(--accent);border-color:var(--accent);background:rgba(0,255,204,.06)}
+
+    /* ── Card ── */
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+      padding:1.8rem;width:100%;max-width:640px}
+    label{display:block;font-size:.72rem;color:var(--muted);text-transform:uppercase;
+      letter-spacing:1px;margin-bottom:.35rem}
+    input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--border);
+      border-radius:6px;color:var(--text);font-family:inherit;font-size:.9rem;
+      padding:.65rem .9rem;margin-bottom:1.1rem;outline:none;transition:border-color .2s}
+    input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+    textarea{resize:vertical;min-height:64px}
+    .row{display:flex;gap:1rem}.row>*{flex:1}
+
+    /* ── Pipeline mode note ── */
+    .mode-note{font-size:.75rem;color:var(--muted);padding:.6rem .8rem;
+      border:1px solid var(--border);border-radius:6px;margin-bottom:1.1rem;line-height:1.6}
+    .mode-note strong{color:var(--accent2)}
+
+    .btn{width:100%;padding:.75rem;background:var(--accent);color:#000;border:none;
+      border-radius:6px;font-family:inherit;font-size:.95rem;font-weight:700;
+      letter-spacing:1px;cursor:pointer;transition:opacity .2s,transform .1s}
+    .btn.pipeline{background:var(--accent2)}
+    .btn:hover:not(:disabled){opacity:.85}.btn:active:not(:disabled){transform:scale(.98)}
+    .btn:disabled{opacity:.45;cursor:not-allowed}
+
+    /* ── Steps ── */
+    #progress{width:100%;max-width:640px;margin-top:1.5rem;display:none}
+    .step{display:flex;align-items:center;gap:.75rem;padding:.6rem .9rem;border-radius:6px;
+      background:var(--surface);border:1px solid var(--border);margin-bottom:.5rem;
+      font-size:.82rem;color:var(--muted);transition:color .3s,border-color .3s}
+    .step.active{color:var(--accent);border-color:var(--accent)}
+    .step.done{color:var(--success);border-color:var(--success)}
+    .step.err{color:var(--error);border-color:var(--error)}
+    .step .icon{font-size:1rem;min-width:1.1rem;text-align:center}
+    .spinner{width:14px;height:14px;border:2px solid currentColor;border-top-color:transparent;
+      border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* ── Progress bar (render stage) ── */
+    .pbar-wrap{width:100%;max-width:640px;margin-top:.75rem;display:none}
+    .pbar-bg{background:var(--surface);border:1px solid var(--border);border-radius:6px;
+      height:12px;overflow:hidden}
+    .pbar-fill{height:100%;background:var(--accent);width:0%;transition:width .5s}
+    .pbar-label{font-size:.72rem;color:var(--muted);text-align:right;margin-top:.3rem}
+
+    /* ── Results ── */
+    #results{width:100%;max-width:640px;margin-top:1.5rem;display:none}
+    .director-note{background:linear-gradient(135deg,rgba(0,255,204,.08),rgba(255,107,53,.05));
+      border:1px solid rgba(0,255,204,.25);border-radius:var(--r);padding:1.1rem 1.3rem;
+      margin-bottom:1rem;font-size:.85rem;line-height:1.7}
+    .director-note strong{display:block;color:var(--accent);font-size:.72rem;
+      letter-spacing:1px;text-transform:uppercase;margin-bottom:.4rem}
+
+    /* ── Video player ── */
+    .video-card{background:var(--surface);border:1px solid var(--accent2);
+      border-radius:var(--r);padding:1.2rem;margin-bottom:1rem}
+    .video-card h3{color:var(--accent2);font-size:.8rem;letter-spacing:1px;
+      text-transform:uppercase;margin-bottom:.8rem}
+    .video-card video{width:100%;border-radius:6px;background:#000}
+    .video-card .dl-btn{display:block;margin-top:.8rem;padding:.6rem;text-align:center;
+      background:var(--accent2);color:#000;border-radius:6px;font-family:inherit;
+      font-size:.85rem;font-weight:700;letter-spacing:1px;text-decoration:none;
+      transition:opacity .2s}.video-card .dl-btn:hover{opacity:.85}
+    .comp-path{font-size:.72rem;color:var(--muted);margin-top:.5rem;word-break:break-all}
+
+    .section{background:var(--surface);border:1px solid var(--border);
+      border-radius:var(--r);margin-bottom:.8rem;overflow:hidden}
+    .section-header{display:flex;align-items:center;justify-content:space-between;
+      padding:.8rem 1rem;cursor:pointer;user-select:none;border-bottom:1px solid var(--border)}
+    .section-header h3{font-size:.82rem;letter-spacing:1px;color:var(--accent)}
+    .section-header .chevron{color:var(--muted);transition:transform .2s;font-size:.75rem}
+    .section-header.open .chevron{transform:rotate(180deg)}
+    .section-body{display:none;padding:1rem}.section-body.open{display:block}
+    .section-body pre{white-space:pre-wrap;word-break:break-word;font-family:inherit;
+      font-size:.8rem;line-height:1.7;color:var(--text)}
+    .copy-btn{background:transparent;border:1px solid var(--border);color:var(--muted);
+      border-radius:4px;font-family:inherit;font-size:.68rem;padding:.22rem .55rem;
+      cursor:pointer;transition:color .2s,border-color .2s}
+    .copy-btn:hover{color:var(--accent);border-color:var(--accent)}
+
+    .error-box{background:rgba(255,50,50,.1);border:1px solid rgba(255,50,50,.3);
+      border-radius:6px;padding:1rem;color:var(--error);font-size:.85rem;
+      margin-top:1rem;width:100%;max-width:640px}
+    footer{margin-top:3rem;color:var(--muted);font-size:.7rem;text-align:center}
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>⚡ VIRAL SHORTS STUDIO</h1>
+  <p>Joints &amp; Jitsu · AI-Powered Short-Form Video Production</p>
+</header>
+
+<!-- Mode tabs -->
+<div class="tabs">
+  <button class="tab active" onclick="switchMode('text',this)">TEXT PACKAGE</button>
+  <button class="tab"        onclick="switchMode('pipeline',this)">FULL PIPELINE (VIDEO)</button>
+</div>
+
+<!-- Input form -->
+<div class="card">
+  <label for="topic">Video Topic / Idea</label>
+  <input id="topic" type="text" placeholder="e.g. How rolling BJJ cured my anxiety" />
+
+  <div class="row">
+    <div>
+      <label for="platform">Platform</label>
+      <select id="platform">
+        <option>TikTok</option>
+        <option>Instagram Reels</option>
+        <option>YouTube Shorts</option>
+      </select>
+    </div>
+    <div>
+      <label for="duration">Duration</label>
+      <select id="duration">
+        <option value="15">15s</option>
+        <option value="30" selected>30s</option>
+        <option value="45">45s</option>
+        <option value="60">60s</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Pipeline-only options -->
+  <div id="pipeline-opts" style="display:none">
+    <div class="mode-note">
+      <strong>Full Pipeline Mode</strong> — Claude generates the production package, scaffolds
+      a Hyperframes HTML composition, then renders it to an MP4 via headless Chrome + FFmpeg.
+      Rendering a 30s video takes ~3–5 minutes.
+    </div>
+    <label for="quality">Render Quality</label>
+    <select id="quality" style="margin-bottom:1.1rem">
+      <option value="standard" selected>Standard (1080×1920 @ 30fps)</option>
+      <option value="draft">Draft (540×960 @ 15fps — fast preview)</option>
+    </select>
+  </div>
+
+  <label for="brandFocus">Brand Focus <span style="color:var(--muted)">(optional)</span></label>
+  <textarea id="brandFocus" placeholder="e.g. Promote our new pre-roll drop; funny comp prep content"></textarea>
+
+  <button class="btn" id="generateBtn" onclick="generate()">GENERATE TEXT PACKAGE</button>
+</div>
+
+<!-- Progress steps -->
+<div id="progress">
+  <div class="step" id="step-hooks">      <span class="icon">🎣</span> Generating viral hooks</div>
+  <div class="step" id="step-script">     <span class="icon">📝</span> Writing video script</div>
+  <div class="step" id="step-production"> <span class="icon">🎥</span> Planning production</div>
+  <div class="step" id="step-titles">     <span class="icon">🏷️</span> Generating titles &amp; hashtags</div>
+  <div class="step" id="step-scaffold">   <span class="icon">🏗️</span> Scaffolding Hyperframes composition</div>
+  <div class="step" id="step-render"  style="display:none"><span class="icon">🎞️</span> Rendering frames (Playwright)</div>
+  <div class="step" id="step-assemble" style="display:none"><span class="icon">🎬</span> Encoding MP4 (FFmpeg)</div>
+  <div class="step" id="step-note">       <span class="icon">🎯</span> Creative director's note</div>
+</div>
+
+<!-- Render progress bar -->
+<div class="pbar-wrap" id="pbar-wrap">
+  <div class="pbar-bg"><div class="pbar-fill" id="pbar-fill"></div></div>
+  <div class="pbar-label" id="pbar-label">0%</div>
+</div>
+
+<!-- Results -->
+<div id="results"></div>
+
+<footer>Powered by Claude claude-sonnet-4-6 · Playwright · FFmpeg · Joints &amp; Jitsu © 2025</footer>
+
+<script>
+  let currentMode = 'text';
+  let pollTimer   = null;
+
+  function switchMode(mode, btn) {
+    currentMode = mode;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    const pipelineOpts = document.getElementById('pipeline-opts');
+    const renderStep   = document.getElementById('step-render');
+    const assembleStep = document.getElementById('step-assemble');
+    const genBtn       = document.getElementById('generateBtn');
+
+    if (mode === 'pipeline') {
+      pipelineOpts.style.display  = 'block';
+      renderStep.style.display    = 'flex';
+      assembleStep.style.display  = 'flex';
+      genBtn.className            = 'btn pipeline';
+      genBtn.textContent          = 'GENERATE + RENDER VIDEO';
+    } else {
+      pipelineOpts.style.display  = 'none';
+      renderStep.style.display    = 'none';
+      assembleStep.style.display  = 'none';
+      genBtn.className            = 'btn';
+      genBtn.textContent          = 'GENERATE TEXT PACKAGE';
+    }
+  }
+
+  function setStep(id, state) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('active','done','err');
+    const sp = el.querySelector('.spinner');
+    if (sp) sp.remove();
+    if (state === 'active') {
+      el.classList.add('active');
+      const s = document.createElement('span'); s.className = 'spinner';
+      el.appendChild(s);
+    } else if (state === 'done') {
+      el.classList.add('done');
+      el.querySelector('.icon').textContent = '✓';
+    } else if (state === 'err') {
+      el.classList.add('err');
+      el.querySelector('.icon').textContent = '✗';
+    }
+  }
+
+  function allStepsDone() {
+    ['step-hooks','step-script','step-production','step-titles','step-scaffold','step-note']
+      .forEach(id => setStep(id,'done'));
+    if (currentMode === 'pipeline') {
+      setStep('step-render','done');
+      setStep('step-assemble','done');
+    }
+  }
+
+  // Advance steps on a timer to give live feedback feel (text mode)
+  function animateStepsText() {
+    const stepIds = ['step-hooks','step-script','step-production','step-titles','step-scaffold','step-note'];
+    let idx = 0;
+    setStep(stepIds[0], 'active');
+    return setInterval(() => {
+      if (idx < stepIds.length - 1) {
+        setStep(stepIds[idx], 'done'); idx++;
+        setStep(stepIds[idx], 'active');
+      }
+    }, 8000);
+  }
+
+  function makeSection(title, content) {
+    const id = 'sec-' + Math.random().toString(36).slice(2);
+    return `<div class="section">
+      <div class="section-header" onclick="toggleSec(this)" id="hdr-${id}">
+        <h3>${title}</h3>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <button class="copy-btn" onclick="event.stopPropagation();copySec('body-${id}')">Copy</button>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="section-body open" id="body-${id}">
+        <pre>${escHtml(content)}</pre>
+      </div></div>`;
+  }
+
+  function toggleSec(hdr) {
+    hdr.classList.toggle('open');
+    const b = document.getElementById(hdr.id.replace('hdr-','body-'));
+    if (b) b.classList.toggle('open');
+  }
+
+  function copySec(bodyId) {
+    const b = document.getElementById(bodyId);
+    if (!b) return;
+    navigator.clipboard.writeText(b.querySelector('pre')?.textContent || '').then(() => {
+      const btn = b.previousElementSibling.querySelector('.copy-btn');
+      if (btn) { btn.textContent='Copied!'; setTimeout(()=>btn.textContent='Copy',1500); }
+    });
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function buildResultsHTML(pkg) {
+    let html = '';
+    if (pkg.directorNote)
+      html += `<div class="director-note"><strong>🎯 Creative Director's Note</strong>${escHtml(pkg.directorNote)}</div>`;
+    if (pkg.compositionPath)
+      html += `<div class="comp-path">📁 Composition: <code>${escHtml(pkg.compositionPath)}/index.html</code><br/>
+        Render with: <code>node pipeline/run.js --slug ${escHtml(pkg.compositionPath.split('/').pop())}</code></div><br/>`;
+    if (pkg.hooks)            html += makeSection('🎣 VIRAL HOOKS',         pkg.hooks);
+    if (pkg.script)           html += makeSection('📝 VIDEO SCRIPT',        pkg.script);
+    if (pkg.productionPlan)   html += makeSection('🎥 PRODUCTION PLAN',     pkg.productionPlan);
+    if (pkg.titlesAndHashtags) html += makeSection('🏷️ TITLES & HASHTAGS', pkg.titlesAndHashtags);
+    return html;
+  }
+
+  // ── TEXT MODE ──────────────────────────────────────────────────────────────
+  async function generateText() {
+    const topic    = document.getElementById('topic').value.trim();
+    const platform = document.getElementById('platform').value;
+    const duration = Number(document.getElementById('duration').value);
+    const brand    = document.getElementById('brandFocus').value.trim();
+    if (!topic) { alert('Please enter a video topic.'); return; }
+
+    resetUI();
+    const timer = animateStepsText();
+
+    try {
+      const resp = await fetch('/api/viral-shorts', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ topic, platform, duration, brandFocus: brand }),
+      });
+      clearInterval(timer);
+      if (!resp.ok) { const e = await resp.json(); throw new Error(e.error || 'Server error'); }
+      const { package: pkg } = await resp.json();
+      allStepsDone();
+      showResults(buildResultsHTML(pkg));
+    } catch (err) {
+      clearInterval(timer);
+      showError(err.message);
+    }
+  }
+
+  // ── PIPELINE MODE ──────────────────────────────────────────────────────────
+  async function generatePipeline() {
+    const topic    = document.getElementById('topic').value.trim();
+    const platform = document.getElementById('platform').value;
+    const duration = Number(document.getElementById('duration').value);
+    const brand    = document.getElementById('brandFocus').value.trim();
+    const quality  = document.getElementById('quality').value;
+    if (!topic) { alert('Please enter a video topic.'); return; }
+
+    resetUI();
+
+    // Show pipeline-specific steps
+    setStep('step-hooks','active');
+
+    // Start job
+    let jobId;
+    try {
+      const resp = await fetch('/api/pipeline/start', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ topic, platform, duration, brandFocus: brand, quality }),
+      });
+      if (!resp.ok) { const e = await resp.json(); throw new Error(e.error||'Server error'); }
+      const data = await resp.json();
+      jobId = data.jobId;
+    } catch (err) {
+      showError(err.message); return;
+    }
+
+    // Stream progress
+    const es = new EventSource(`/api/pipeline/stream/${jobId}`);
+
+    let lastStage = null;
+    const stepMap = {
+      agent:    ['step-hooks','step-script','step-production','step-titles','step-scaffold','step-note'],
+      render:   ['step-render'],
+      assemble: ['step-assemble'],
+    };
+
+    es.onmessage = (e) => {
+      const d = JSON.parse(e.data);
+
+      if (d.error) { showError(d.error); es.close(); return; }
+
+      // Stage transitions
+      if (d.stage && d.stage !== lastStage) {
+        if (lastStage && stepMap[lastStage]) {
+          stepMap[lastStage].forEach(id => setStep(id,'done'));
+        }
+        if (d.stage === 'render') {
+          setStep('step-scaffold','done');
+          setStep('step-render','active');
+          document.getElementById('pbar-wrap').style.display = 'block';
+        } else if (d.stage === 'assemble') {
+          setStep('step-render','done');
+          setStep('step-assemble','active');
+        } else if (d.stage === 'agent' && lastStage === null) {
+          setStep('step-hooks','active');
+        }
+        lastStage = d.stage;
+      }
+
+      // Progress bar (render stage)
+      if (d.stage === 'render' && d.progress) {
+        const pct = Math.min(100, Math.round(((d.progress - 30) / 40) * 100));
+        document.getElementById('pbar-fill').style.width  = pct + '%';
+        document.getElementById('pbar-label').textContent = pct + '%';
+      }
+
+      if (d.status === 'error') {
+        showError(d.error || 'Pipeline failed'); es.close(); return;
+      }
+
+      if (d.status === 'done') {
+        es.close();
+        allStepsDone();
+
+        // Fetch full job result for package data
+        fetch(`/api/pipeline/status/${jobId}`)
+          .then(r => r.json()).then(job => {
+            let html = '';
+            if (d.videoPath) {
+              html += `<div class="video-card">
+                <h3>🎬 Rendered Video</h3>
+                <video controls playsinline>
+                  <source src="/api/pipeline/download/${jobId}" type="video/mp4" />
+                  Your browser doesn't support HTML5 video.
+                </video>
+                <a class="dl-btn" href="/api/pipeline/download/${jobId}" download>
+                  ⬇ Download MP4
+                </a>
+                <div class="comp-path">📁 ${escHtml(d.videoPath)}</div>
+              </div>`;
+            }
+            if (job.pkg) html += buildResultsHTML(job.pkg);
+            showResults(html);
+          });
+      }
+    };
+
+    es.onerror = () => { showError('Lost connection to server.'); es.close(); };
+  }
+
+  // ── Shared UI helpers ──────────────────────────────────────────────────────
+  function resetUI() {
+    document.getElementById('results').style.display  = 'none';
+    document.getElementById('results').innerHTML      = '';
+    document.getElementById('progress').style.display = 'block';
+    document.getElementById('pbar-wrap').style.display = 'none';
+    document.getElementById('pbar-fill').style.width  = '0%';
+
+    const allStepIds = ['step-hooks','step-script','step-production',
+      'step-titles','step-scaffold','step-render','step-assemble','step-note'];
+    allStepIds.forEach(id => setStep(id,''));
+
+    const btn = document.getElementById('generateBtn');
+    btn.disabled    = true;
+    btn.textContent = 'GENERATING…';
+  }
+
+  function showResults(html) {
+    const el = document.getElementById('results');
+    el.innerHTML        = html;
+    el.style.display    = 'block';
+    const btn = document.getElementById('generateBtn');
+    btn.disabled = false;
+    btn.textContent = currentMode === 'pipeline' ? 'GENERATE + RENDER VIDEO' : 'GENERATE TEXT PACKAGE';
+    el.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('results');
+    el.innerHTML     = `<div class="error-box">⚠ ${escHtml(msg)}</div>`;
+    el.style.display = 'block';
+    const btn = document.getElementById('generateBtn');
+    btn.disabled = false;
+    btn.textContent = currentMode === 'pipeline' ? 'GENERATE + RENDER VIDEO' : 'GENERATE TEXT PACKAGE';
+  }
+
+  function generate() {
+    if (currentMode === 'pipeline') generatePipeline();
+    else                            generateText();
+  }
+
+  document.getElementById('topic').addEventListener('keydown', e => {
+    if (e.key === 'Enter') generate();
+  });
+</script>
+</body>
+</html>

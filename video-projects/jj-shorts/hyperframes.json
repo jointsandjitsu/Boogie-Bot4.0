@@ -1,0 +1,9 @@
+{
+  "entry": "index.html",
+  "output": "renders/",
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "duration": 30,
+  "compositions": "compositions/"
+}

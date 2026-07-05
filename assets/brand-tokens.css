@@ -1,0 +1,42 @@
+/* ============================================================
+   Joints & Jitsu — Global Brand Tokens
+   Import in every Hyperframes composition:
+     <link rel="stylesheet" href="../../assets/brand-tokens.css" />
+   ============================================================ */
+:root {
+  /* Colors */
+  --jj-bg:       #0a0a0f;
+  --jj-surface:  #12121a;
+  --jj-border:   #1e1e2e;
+  --jj-accent:   #00ffcc;
+  --jj-accent2:  #ff6b35;
+  --jj-green:    #39d353;
+  --jj-text:     #e0e0f0;
+  --jj-muted:    #6b6b8a;
+  --jj-white:    #ffffff;
+
+  /* Typography */
+  --jj-font-display: 'Impact', 'Arial Black', 'Haettenschweiler', sans-serif;
+  --jj-font-body:    'Courier New', 'Courier', monospace;
+  --jj-font-ui:      system-ui, -apple-system, sans-serif;
+
+  /* Gradients */
+  --jj-gradient-bg:
+    radial-gradient(ellipse at 50% 20%, #0d1f1f 0%, var(--jj-bg) 65%);
+  --jj-gradient-accent:
+    linear-gradient(135deg, var(--jj-accent) 0%, var(--jj-accent2) 100%);
+  --jj-gradient-glow:
+    radial-gradient(ellipse at 50% 50%, rgba(0,255,204,.18) 0%, transparent 70%);
+
+  /* Glows */
+  --jj-glow-cyan:   0 0 40px rgba(0,255,204,.55);
+  --jj-glow-orange: 0 0 40px rgba(255,107,53,.55);
+  --jj-shadow-text: 0 2px 12px rgba(0,0,0,.85);
+
+  /* Canvas (1080×1920) */
+  --jj-canvas-w:    1080px;
+  --jj-canvas-h:    1920px;
+  --jj-pad-h:       64px;
+  --jj-safe-top:    160px;
+  --jj-safe-bottom: 280px;
+}
